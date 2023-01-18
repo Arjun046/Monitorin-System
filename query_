@@ -1,0 +1,22 @@
+select
+min(created) as created_time_start,
+max(created) as created_time_end,
+event_type,
+executed,
+enabled,
+case when event_type in ('terminateRequest', 'sendInitiateRequest', 'sendUpdateRequest')
+then substring_index(substring_index(substring(json_arguments,instr(json_arguments,'eventCode'),50),'\\\\',3),'\"',-1)
+else substring_index(substring_index(substring(json_arguments,instr(json_arguments,'statusCode'),50),'\\\\',3),'\"',-1) end as event,
+substring_index(substring_index(substring(json_arguments,instr(json_arguments,'courierCode'),50),'\\\\',3),'\"',-1) as courierCode,
+min(tracking_number) as sample_awb,
+count(tracking_number) as total_tracking_number,
+sum(case when retry_count=0 then 1 else 0 END) as retry_count_0,
+sum(case when retry_count=1 then 1 else 0 END) as retry_count_1,
+sum(case when retry_count=2 then 1 else 0 END) as retry_count_2,
+sum(case when retry_count=3 then 1 else 0 END) as retry_count_3,
+sum(case when retry_count=4 then 1 else 0 END) as retry_count_4,
+sum(case when retry_count=5 then 1 else 0 END) as retry_count_5
+from event_instance
+where created between '2019-06-04 12:00:00' and '2019-06-04 13:00:00'
+group by created - INTERVAL extract(SECOND FROM created) second - INTERVAL EXTRACT(MINUTE FROM created) % 10  MINUTE ,3,4,5,6,7;
+

@@ -1,0 +1,15 @@
+ssh kapil.kumar01.in@10.70.143.14
+
+
+
+
+
+mysql -u root -p'EngServ@001'                    (grafana server)
+
+
+
+
+
+
+
+mysql -u   pa14350IU -pq#zfXk27b -h 10.70.30.183 -P 3611                     (production server)
